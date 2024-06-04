@@ -26,7 +26,7 @@ public class Empresa {
             name = "geradorIds",
             sequenceName = "sq_tb_empresa",
             allocationSize = 1)
-    @Column(name = "pk_id_empresa")
+    @Column(name = "pk_id_empresa",  columnDefinition = "NUMERIC(10)")
     private Long id;
 
     @Column(name = "nm_empresa", columnDefinition = "VARCHAR(100)", nullable = false)
@@ -47,14 +47,6 @@ public class Empresa {
     @Column(name = "tp_empresa",  columnDefinition = "VARCHAR(20)", nullable = false)
     private String tpEmpresa;
 
-    /*
-    @Column(name = "tp_empresa", columnDefinition = "VARCHAR(20)", nullable = true)
-    private String infos;
-    */
-
-    @OneToMany(mappedBy = "empresa")
-    //@JoinColumn(nullable = true)
-    private List<EmpresaLogradouro> empresaLogradouros;
 
     public Empresa(EmpresaDTO dadosEmpresa) {
         this.nome = dadosEmpresa.nome();

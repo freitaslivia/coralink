@@ -24,7 +24,7 @@ public class Usuario {
             name = "geradorIds",
             sequenceName = "sq_tb_empresa",
             allocationSize = 1)
-    @Column(name = "pk_id_empresa")
+    @Column(name = "pk_id_empresa",  columnDefinition = "NUMERIC(10)")
     private Long id;
 
     @Column(name = "nm_exibicao", columnDefinition = "VARCHAR(50)", nullable = false)
@@ -36,9 +36,9 @@ public class Usuario {
     @Column(name = "ds_senha",  columnDefinition = "VARCHAR(15)", nullable = false)
     private String senha;
 
-    public Usuario(UsuarioDTO dadosEmpresa) {
-        this.nome = dadosEmpresa.nome();
-        this.email = dadosEmpresa.email();
-        this.senha = dadosEmpresa.senha();
+    public Usuario(UsuarioDTO dadosUsuarios) {
+        this.nome = dadosUsuarios.nome();
+        this.email = dadosUsuarios.email();
+        this.senha = dadosUsuarios.senha();
     }
 }

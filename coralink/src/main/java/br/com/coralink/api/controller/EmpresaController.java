@@ -70,6 +70,9 @@ public class EmpresaController {
             @ApiResponse(responseCode = "201", description = "Empresa gravada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
                     @Content(schema = @Schema())
+            }),
+            @ApiResponse(responseCode = "500", description = "Erro de Negocio", content = {
+                    @Content(schema = @Schema())
             })
     })
     @PostMapping

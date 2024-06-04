@@ -1,11 +1,9 @@
 package br.com.coralink.api.model;
 
+import br.com.coralink.api.dto.LogradouroDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,6 +13,7 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class Logradouro {
     @Id
     @GeneratedValue(
@@ -24,7 +23,7 @@ public class Logradouro {
             name = "geradorIds",
             sequenceName = "sq_tb_logradouro",
             allocationSize = 1)
-    @Column(name = "pk_id_logradouro")
+    @Column(name = "pk_id_logradouro",  columnDefinition = "NUMERIC(10)")
     private Long id;
 
     @Column(name = "nm_logradouro",  columnDefinition = "VARCHAR(100)", nullable = false)
@@ -33,16 +32,31 @@ public class Logradouro {
     @Column(name = "nr_cep",  columnDefinition = "char(8)", nullable = false)
     private String cep;
 
+    @Column(name = "ds_tipo_logradouro",  columnDefinition = "VARCHAR(50)", nullable = false)
+    private String tipo;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "pk_id_bairro", nullable = false)
     @JsonIgnore
     private Bairro bairro;
 
-    @OneToMany(mappedBy = "logradouro")
-    //@JoinColumn(nullable = true)
-    private List<TecnicoLogradouro> tecnicoLogradouros;
+    @ManyToMany
+    @JoinTable(name = "CORALINK_TECNICO_LOGRADOURO",
+            joinColumns = @JoinColumn(name = "pk_id_logradouro"),
+            inverseJoinColumns = @JoinColumn(name = "pk_id_tecnico"))
+    private List<Tecnico> tecnicos;
 
-    @OneToMany(mappedBy = "logradouro")
-    //@JoinColumn(nullable = true)
-    private List<EmpresaLogradouro> empresaLogradouros;
+    @ManyToMany
+    @JoinTable(name = "CORALINK_TECNICO_EMPRESA",
+            joinColumns = @JoinColumn(name = "pk_id_logradouro"),
+            inverseJoinColumns = @JoinColumn(name = "pk_id_empresa"))
+    private List<Empresa> empresas;
+
+    public Logradouro(LogradouroDTO dadosLogradouro, Bairro bairro) {
+        this.nome = dadosLogradouro.nome();
+        this.cep = dadosLogradouro.cep();
+        this.tipo = dadosLogradouro.tipo();
+        this.bairro = bairro;
+
+    }
 }
