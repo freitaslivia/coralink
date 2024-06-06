@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 
@@ -43,10 +44,11 @@ public class Tecnico {
     @JsonIgnore
     private Usuario usuario;
 
-    public Tecnico(TecnicoDTO dadosTecnico, Usuario usuario) {
+    public Tecnico(TecnicoDTO dadosTecnico, Optional<Usuario> usuario) {
         this.nome = dadosTecnico.nome();
         this.telefone = dadosTecnico.telefone();
         this.nomeEmpresa = dadosTecnico.nomeEmpresa();
         this.usuario = usuario;
     }
+
 }

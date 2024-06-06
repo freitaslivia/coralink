@@ -41,4 +41,5 @@ public class Usuario {
         this.email = dadosUsuarios.email();
         this.senha = dadosUsuarios.senha();
     }
+
 }
