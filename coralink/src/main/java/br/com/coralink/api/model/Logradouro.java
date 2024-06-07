@@ -23,7 +23,7 @@ public class Logradouro {
             name = "geradorIds",
             sequenceName = "sq_tb_logradouro",
             allocationSize = 1)
-    @Column(name = "pk_id_logradouro",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_logradouro",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "nm_logradouro",  columnDefinition = "VARCHAR(100)", nullable = false)

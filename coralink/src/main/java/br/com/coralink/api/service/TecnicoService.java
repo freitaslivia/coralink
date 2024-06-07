@@ -1,8 +1,8 @@
 package br.com.coralink.api.service;
 
 
-import br.com.coralink.api.controller.EmpresaController;
 import br.com.coralink.api.controller.TecnicoController;
+import br.com.coralink.api.dto.TecnicoAtualizarDTO;
 import br.com.coralink.api.dto.TecnicoDTO;
 import br.com.coralink.api.dto.TecnicoResponseDTO;
 import br.com.coralink.api.exception.ErroNegocioException;
@@ -10,6 +10,7 @@ import br.com.coralink.api.model.Tecnico;
 import br.com.coralink.api.model.Usuario;
 import br.com.coralink.api.repository.TecnicoRepository;
 import br.com.coralink.api.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,32 +44,37 @@ public class TecnicoService {
 
     public TecnicoResponseDTO salvarTecnico(TecnicoDTO novoTecnico){
         Optional<Usuario> usuario = usuarioRepository.findById(novoTecnico.idUsuario());
-        if (usuario == null) {
+        if (usuario.isEmpty()) {
             throw new ErroNegocioException("Usuário não encontrado");
         }
-        Tecnico tecnico = new Tecnico(novoTecnico, usuario);
+
+        boolean existente = this.tecnicoRepository.existsByTelefone(novoTecnico.telefone());
+
+        if (existente){
+            throw new ErroNegocioException("Telefone já existente");
+        }
+
+        Tecnico tecnico = new Tecnico(novoTecnico, usuario.get());
 
         tecnico = this.tecnicoRepository.save(tecnico);
 
         return new TecnicoResponseDTO(tecnico);
     }
 
-    /*
-    public EmpresaDTO atualizarProduto(Long id, EmpresaDTO empresaDTO){
-        Optional<EmpresaDTO> empresaOptional = produtoRepository.findById(id);
-        if (empresaOptional.isPresent()) {
 
-            Produto produtoAtual = produtoOptional.get();
-            produtoAtual.setNome(produto.getNome());
-            produtoAtual.setDescricao(produto.getDescricao());
-            produtoAtual.setPreco(produto.getPreco());
-            produtoAtual.setDimensoes(produto.getDimensoes());
-            return produtoRepository.save(produtoAtual);
+    public TecnicoResponseDTO atualizarTecnico(Long id, @Valid TecnicoAtualizarDTO tecnicoDTO){
+        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
+        if (tecnicoOptional.isPresent()) {
+
+            Tecnico tecnico = tecnicoOptional.get();
+            tecnico.setTelefone(tecnicoDTO.telefone());
+
+            tecnicoRepository.save(tecnico);
+
+            return new TecnicoResponseDTO(tecnico);
         }
         return null;
     }
-
-     */
 
 
     private TecnicoResponseDTO toDTO(Tecnico tecnico, boolean self) {
@@ -82,7 +88,6 @@ public class TecnicoService {
                 tecnico.getId(),
                 tecnico.getNome(),
                 tecnico.getNomeEmpresa(),
-                tecnico.getUsuario(),
                 link
         );
     }

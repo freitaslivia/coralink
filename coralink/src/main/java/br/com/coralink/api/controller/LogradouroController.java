@@ -2,7 +2,10 @@ package br.com.coralink.api.controller;
 
 import br.com.coralink.api.dto.EmpresaDTO;
 import br.com.coralink.api.dto.EmpresaResponseDTO;
+import br.com.coralink.api.dto.LogradouroDTO;
+import br.com.coralink.api.dto.LogradouroResponseDTO;
 import br.com.coralink.api.service.EmpresaService;
+import br.com.coralink.api.service.LogradouroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,53 +21,53 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(value = "/empresas", produces = {"application/json"})
-@Tag(name = "api-empresa")
+@RequestMapping(value = "/logradouros", produces = {"application/json"})
+@Tag(name = "api-logradouro")
 public class LogradouroController {
 
     @Autowired
-    private EmpresaService empresaService;
+    private LogradouroService logradouroService;
 
-    @Operation(summary = "Retorna todas Empresas em páginas de 5")
+    @Operation(summary = "Retorna todos Logradouros em páginas de 5")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "204", description = "Nenhum produto encontrado", content = {
+            @ApiResponse(responseCode = "204", description = "Nenhum logradouro encontrado", content = {
                     @Content(schema = @Schema())
             })
     })
 
     @GetMapping
-    public ResponseEntity<Page<EmpresaResponseDTO>> buscarEmpresas() {
-        Page<EmpresaResponseDTO> empresaDTO = empresaService.buscarEmpresas();
-        if (empresaDTO == null) {
+    public ResponseEntity<Page<LogradouroResponseDTO>> buscarLogradouros() {
+        Page<LogradouroResponseDTO> logradouroDTO = logradouroService.buscarLogradouros();
+        if (logradouroDTO == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return ResponseEntity.ok(empresaDTO);
+            return ResponseEntity.ok(logradouroDTO);
         }
     }
 
 
-    @Operation(summary = "Retorna uma empresa específica por id")
+    @Operation(summary = "Retorna um logradouro específica por id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "204", description = "Nenhuma Empresa encontrado para o id informado", content = {
+            @ApiResponse(responseCode = "204", description = "Nenhum logradouro encontrado para o id informado", content = {
                     @Content(schema = @Schema())
             })
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EmpresaResponseDTO> buscarEmpresaPorId(@PathVariable Long id) {
-        EmpresaResponseDTO empresaDTO = empresaService.buscarEmpresaPorId(id);
-        if (empresaDTO == null) {
+    public ResponseEntity<LogradouroResponseDTO> buscarLogradouroPorId(@PathVariable Long id) {
+        LogradouroResponseDTO logradouroDTO = logradouroService.buscarLogradouroPorId(id);
+        if (logradouroDTO == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return ResponseEntity.ok(empresaDTO);
+            return ResponseEntity.ok(logradouroDTO);
         }
     }
 
 
-    @Operation(summary = "Grava uma Empreaa")
+    @Operation(summary = "Grava um Logradouro")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Empresa gravada com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Logradouro gravado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
                     @Content(schema = @Schema())
             }),
@@ -73,24 +76,8 @@ public class LogradouroController {
             })
     })
     @PostMapping
-    public ResponseEntity<EmpresaResponseDTO> gravarEmpresa(@Valid @RequestBody EmpresaDTO empresaDTO) {
-        EmpresaResponseDTO empresa = empresaService.salvarEmpresa(empresaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
+    public ResponseEntity<LogradouroResponseDTO> gravarLogradouro(@Valid @RequestBody LogradouroDTO logradouroDTO) {
+        LogradouroResponseDTO logradouro = logradouroService.salvarLogradouro(logradouroDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(logradouro);
     }
-
-/*
-    @Operation(summary = "Atualiza um produto com base no id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
-                    @Content(schema = @Schema())
-            })
-    })
-
-    @PutMapping("/{id}")
-    public ResponseEntity<EmpresaResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresaDTO) {
-        EmpresaResponseDTO empresa = empresaService.atualizarProduto(id, empresaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
-    }
- */
 }

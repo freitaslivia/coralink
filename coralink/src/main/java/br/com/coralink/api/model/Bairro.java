@@ -22,7 +22,7 @@ public class Bairro {
             name = "geradorIds",
             sequenceName = "sq_tb_bairro",
             allocationSize = 1)
-    @Column(name = "pk_id_bairro",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_bairro",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "nm_bairro",  columnDefinition = "VARCHAR(100)", nullable = false)

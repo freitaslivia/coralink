@@ -1,12 +1,7 @@
 package br.com.coralink.api.dto;
 
 import br.com.coralink.api.model.Estado;
-import io.swagger.v3.oas.annotations.links.Link;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import org.springframework.hateoas.Link;
 
 public record EstadoResponseDTO(
         Long id,

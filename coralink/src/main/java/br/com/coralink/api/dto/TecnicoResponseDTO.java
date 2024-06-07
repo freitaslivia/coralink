@@ -1,7 +1,7 @@
 package br.com.coralink.api.dto;
 
 import br.com.coralink.api.model.Tecnico;
-import io.swagger.v3.oas.annotations.links.Link;
+import org.springframework.hateoas.Link;
 
 public record TecnicoResponseDTO(
 

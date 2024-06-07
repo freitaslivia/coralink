@@ -1,10 +1,7 @@
 package br.com.coralink.api.controller;
 
-import br.com.coralink.api.dto.EmpresaDTO;
-import br.com.coralink.api.dto.EmpresaResponseDTO;
-import br.com.coralink.api.dto.TecnicoDTO;
-import br.com.coralink.api.dto.TecnicoResponseDTO;
-import br.com.coralink.api.service.EmpresaService;
+import br.com.coralink.api.dto.*;
+import br.com.coralink.api.model.Tecnico;
 import br.com.coralink.api.service.TecnicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,7 +62,7 @@ public class TecnicoController {
     }
 
 
-    @Operation(summary = "Grava uma Empreaa")
+    @Operation(summary = "Grava um Tecnico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Tecnico gravado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
@@ -81,19 +78,18 @@ public class TecnicoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tecnico);
     }
 
-/*
-    @Operation(summary = "Atualiza um produto com base no id")
+
+    @Operation(summary = "Atualiza um tecnico com base no id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto atualizado com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Tecnico atualizado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
                     @Content(schema = @Schema())
             })
     })
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmpresaResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresaDTO) {
-        EmpresaResponseDTO empresa = empresaService.atualizarProduto(id, empresaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
+    public ResponseEntity<TecnicoResponseDTO> atualizarTecnico(@PathVariable Long id, @Valid @RequestBody TecnicoAtualizarDTO tecnicoDTO) {
+        TecnicoResponseDTO tecnico = tecnicoService.atualizarTecnico(id, tecnicoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tecnico);
     }
- */
 }

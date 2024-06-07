@@ -31,7 +31,7 @@ public class EmpresaController {
     @Operation(summary = "Retorna todas Empresas em páginas de 5")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "204", description = "Nenhum produto encontrado", content = {
+            @ApiResponse(responseCode = "204", description = "Nenhuma empresa encontrado", content = {
                     @Content(schema = @Schema())
             })
     })
@@ -81,19 +81,4 @@ public class EmpresaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
     }
 
-/*
-    @Operation(summary = "Atualiza um produto com base no id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
-                    @Content(schema = @Schema())
-            })
-    })
-
-    @PutMapping("/{id}")
-    public ResponseEntity<EmpresaResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresaDTO) {
-        EmpresaResponseDTO empresa = empresaService.atualizarProduto(id, empresaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
-    }
- */
 }

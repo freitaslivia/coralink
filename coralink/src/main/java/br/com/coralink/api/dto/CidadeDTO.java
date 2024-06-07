@@ -19,12 +19,10 @@ public record CidadeDTO(
 
         @NotBlank(message = "O campo não pode estar vazio")
         @Size(min = 3, max = 3, message = "O campo deve ter exatamente 3 caracteres")
-        @Pattern(regexp = "^[0-9]$", message = "Deve ter somente números")
+        @Pattern(regexp = "[0-9]+", message = "Deve ter somente números")
         @Schema(description = "DDD da Cidade", example = "011")
         String ddd,
 
-        @NotNull(message = "O campo não pode ser nulo")
-        @Pattern(regexp = "^[0-9]$", message = "Deve ter somente números")
         @Schema(description = "ID do Estado", example = "1")
         Long idEstado
 ) {

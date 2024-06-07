@@ -22,8 +22,6 @@ public record BairroDTO(
         @Schema(description = "Zona do Bairro", example = "Zona leste")
         String nomeZona,
 
-        @NotNull(message = "O campo não pode ser nulo")
-        @Pattern(regexp = "^[0-9]$", message = "Deve ter somente números")
         @Schema(description = "ID da Cidade", example = "Residencial")
         Long idCidade
 

@@ -25,7 +25,7 @@ public class Estado {
             name = "geradorIds",
             sequenceName = "sq_tb_estado",
             allocationSize = 1)
-    @Column(name = "pk_id_estado",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_estado",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "sg_estado",  columnDefinition = "char(2)", nullable = false)

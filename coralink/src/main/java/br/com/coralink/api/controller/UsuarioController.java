@@ -1,10 +1,7 @@
 package br.com.coralink.api.controller;
 
-import br.com.coralink.api.dto.EmpresaDTO;
-import br.com.coralink.api.dto.EmpresaResponseDTO;
-import br.com.coralink.api.dto.UsuarioDTO;
-import br.com.coralink.api.dto.UsuarioResponseDTO;
-import br.com.coralink.api.service.EmpresaService;
+import br.com.coralink.api.dto.*;
+import br.com.coralink.api.dto.LoginDTO;
 import br.com.coralink.api.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +28,7 @@ public class UsuarioController {
     @Operation(summary = "Retorna todos Usuarios em páginas de 5")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "204", description = "Nenhum produto encontrado", content = {
+            @ApiResponse(responseCode = "204", description = "Nenhum Usuario encontrado", content = {
                     @Content(schema = @Schema())
             })
     })
@@ -76,24 +73,39 @@ public class UsuarioController {
             })
     })
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> gravarEmpresa(@Valid @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioResponseDTO> gravarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
         UsuarioResponseDTO usuario = usuarioService.salvarUsuario(usuarioDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
-
-/*
-    @Operation(summary = "Atualiza um produto com base no id")
+    @Operation(summary = "Atualiza um usuario com base no id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto atualizado com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Usuario atualizado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
                     @Content(schema = @Schema())
             })
     })
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmpresaResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresaDTO) {
-        EmpresaResponseDTO empresa = empresaService.atualizarProduto(id, empresaDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(empresa);
+    public ResponseEntity<UsuarioResponseDTO> atualizarTecnico(@PathVariable Long id, @Valid @RequestBody NovaSenhaDTO senhaDTO) {
+        UsuarioResponseDTO senha = usuarioService.atualizarSenha(id, senhaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(senha);
     }
- */
+
+    @Operation(summary = "Login de um Usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Login feito com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro de validação dos dados", content = {
+                    @Content(schema = @Schema())
+            }),
+            @ApiResponse(responseCode = "500", description = "Erro de Negocio", content = {
+                    @Content(schema = @Schema())
+            })
+    })
+    @PostMapping("login")
+    public ResponseEntity<UsuarioResponseDTO> login(@Valid @RequestBody LoginDTO login) {
+
+        UsuarioResponseDTO usuario = this.usuarioService.logar(login);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    }
 }

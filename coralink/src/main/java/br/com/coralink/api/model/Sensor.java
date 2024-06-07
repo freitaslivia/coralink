@@ -23,7 +23,7 @@ public class Sensor {
             name = "geradorIds",
             sequenceName = "sq_tb_sensor",
             allocationSize = 1)
-    @Column(name = "pk_id_sensor",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_sensor",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "nm_sensor",  columnDefinition = "char(12)", nullable = false)
@@ -32,16 +32,16 @@ public class Sensor {
     @Column(name = "nr_numero_serie",  columnDefinition = "char(23)", nullable = false)
     private String numeroSerie;
 
-    @Column(name = "ds_codigo_pareamento",  columnDefinition = "NUMERIC(10)", nullable = false)
+    @Column(name = "ds_codigo_pareamento",  columnDefinition = "NUMBER(10)", nullable = false)
     private int codigoPareamento;
 
     @Column(name = "ds_sensor_main",  columnDefinition = "char(17)", nullable = false)
     private String sensorMain;
 
-    @Column(name = "nr_latitude",  columnDefinition = "NUMERIC(6)", nullable = false)
+    @Column(name = "nr_latitude",  columnDefinition = "NUMBER(6)", nullable = false)
     private int latitude;
 
-    @Column(name = "nr_longitude",  columnDefinition = "NUMERIC(6)", nullable = false)
+    @Column(name = "nr_longitude",  columnDefinition = "NUMBER(6)", nullable = false)
     private int longitude;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

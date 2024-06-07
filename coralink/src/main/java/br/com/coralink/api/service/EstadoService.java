@@ -2,10 +2,15 @@ package br.com.coralink.api.service;
 
 
 import br.com.coralink.api.controller.EmpresaController;
+import br.com.coralink.api.controller.EstadoController;
 import br.com.coralink.api.dto.EmpresaDTO;
 import br.com.coralink.api.dto.EmpresaResponseDTO;
+import br.com.coralink.api.dto.EstadoDTO;
+import br.com.coralink.api.dto.EstadoResponseDTO;
 import br.com.coralink.api.model.Empresa;
+import br.com.coralink.api.model.Estado;
 import br.com.coralink.api.repository.EmpresaRepository;
+import br.com.coralink.api.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,56 +27,43 @@ public class EstadoService {
     private static final Pageable paginacaoPersonalizada = PageRequest.of(0, 5, Sort.by("nome").ascending());
 
     @Autowired
-    private EmpresaRepository empresaRepository;
+    private EstadoRepository estadoRepository;
 
-    public Page<EmpresaResponseDTO> buscarEmpresas() {
-        return empresaRepository.findAll(paginacaoPersonalizada).map(empresa -> toDTO(empresa, true));
+    public Page<EstadoResponseDTO> buscarEstados() {
+        return estadoRepository.findAll(paginacaoPersonalizada).map(estado -> toDTO(estado, true));
     }
 
-    public EmpresaResponseDTO buscarEmpresaPorId(Long id) {
-        return empresaRepository.findById(id).map(empresa -> toDTO(empresa, false)).orElse(null);
+    public EstadoResponseDTO buscarEstadoPorId(Long id) {
+        return estadoRepository.findById(id).map(estado -> toDTO(estado, false)).orElse(null);
     }
 
-    public EmpresaResponseDTO salvarEmpresa(EmpresaDTO novaEmpresa){
-        Empresa empresa = new Empresa(novaEmpresa);
+    public EstadoResponseDTO salvarEstado(EstadoDTO novoEstado){
 
-        empresa = this.empresaRepository.save(empresa);
+        Estado estadoExistente = this.estadoRepository.findBySigla(novoEstado.sigla().toUpperCase());
 
-        return new EmpresaResponseDTO(empresa);
-    }
-
-    /*
-    public EmpresaDTO atualizarProduto(Long id, EmpresaDTO empresaDTO){
-        Optional<EmpresaDTO> empresaOptional = produtoRepository.findById(id);
-        if (empresaOptional.isPresent()) {
-
-            Produto produtoAtual = produtoOptional.get();
-            produtoAtual.setNome(produto.getNome());
-            produtoAtual.setDescricao(produto.getDescricao());
-            produtoAtual.setPreco(produto.getPreco());
-            produtoAtual.setDimensoes(produto.getDimensoes());
-            return produtoRepository.save(produtoAtual);
+        if(estadoExistente != null){
+            return new EstadoResponseDTO(estadoExistente);
         }
-        return null;
+
+
+        Estado estado = new Estado(novoEstado);
+
+        estado = this.estadoRepository.save(estado);
+
+        return new EstadoResponseDTO(estado);
     }
 
-     */
-
-
-    private EmpresaResponseDTO toDTO(Empresa empresa, boolean self) {
+    private EstadoResponseDTO toDTO(Estado estado, boolean self) {
         Link link;
         if (self) {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresaPorId(empresa.getId())).withSelfRel();
+            link = linkTo(methodOn(EstadoController.class).buscarEstadoPorId(estado.getId())).withSelfRel();
         } else {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresas()).withRel("Lista de Empresas");
+            link = linkTo(methodOn(EstadoController.class).buscarEstados()).withRel("Lista de Estado");
         }
-        return new EmpresaResponseDTO(
-                empresa.getId(),
-                empresa.getNome(),
-                empresa.getNomeExibicao(),
-                empresa.getEmail(),
-                empresa.getTpEmpresa(),
-                empresa.getTelefone(),
+        return new EstadoResponseDTO(
+                estado.getId(),
+                estado.getNome(),
+                estado.getSigla(),
                 link
         );
     }

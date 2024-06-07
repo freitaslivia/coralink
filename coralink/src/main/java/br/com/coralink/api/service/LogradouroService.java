@@ -2,10 +2,13 @@ package br.com.coralink.api.service;
 
 
 import br.com.coralink.api.controller.EmpresaController;
-import br.com.coralink.api.dto.EmpresaDTO;
-import br.com.coralink.api.dto.EmpresaResponseDTO;
-import br.com.coralink.api.model.Empresa;
+import br.com.coralink.api.controller.LogradouroController;
+import br.com.coralink.api.dto.*;
+import br.com.coralink.api.exception.ErroNegocioException;
+import br.com.coralink.api.model.*;
+import br.com.coralink.api.repository.BairroRepository;
 import br.com.coralink.api.repository.EmpresaRepository;
+import br.com.coralink.api.repository.LogradouroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -22,56 +27,45 @@ public class LogradouroService {
     private static final Pageable paginacaoPersonalizada = PageRequest.of(0, 5, Sort.by("nome").ascending());
 
     @Autowired
-    private EmpresaRepository empresaRepository;
+    private LogradouroRepository logradouroRepository;
 
-    public Page<EmpresaResponseDTO> buscarEmpresas() {
-        return empresaRepository.findAll(paginacaoPersonalizada).map(empresa -> toDTO(empresa, true));
+
+    @Autowired
+    private BairroRepository bairroRepository;
+
+    public Page<LogradouroResponseDTO> buscarLogradouros() {
+        return logradouroRepository.findAll(paginacaoPersonalizada).map(logradouro -> toDTO(logradouro, true));
     }
 
-    public EmpresaResponseDTO buscarEmpresaPorId(Long id) {
-        return empresaRepository.findById(id).map(empresa -> toDTO(empresa, false)).orElse(null);
+    public LogradouroResponseDTO buscarLogradouroPorId(Long id) {
+        return logradouroRepository.findById(id).map(logradouro -> toDTO(logradouro, false)).orElse(null);
     }
 
-    public EmpresaResponseDTO salvarEmpresa(EmpresaDTO novaEmpresa){
-        Empresa empresa = new Empresa(novaEmpresa);
-
-        empresa = this.empresaRepository.save(empresa);
-
-        return new EmpresaResponseDTO(empresa);
-    }
-
-    /*
-    public EmpresaDTO atualizarProduto(Long id, EmpresaDTO empresaDTO){
-        Optional<EmpresaDTO> empresaOptional = produtoRepository.findById(id);
-        if (empresaOptional.isPresent()) {
-
-            Produto produtoAtual = produtoOptional.get();
-            produtoAtual.setNome(produto.getNome());
-            produtoAtual.setDescricao(produto.getDescricao());
-            produtoAtual.setPreco(produto.getPreco());
-            produtoAtual.setDimensoes(produto.getDimensoes());
-            return produtoRepository.save(produtoAtual);
+    public LogradouroResponseDTO salvarLogradouro(LogradouroDTO novoLogradouro){
+        Optional<Bairro> bairro = bairroRepository.findById(novoLogradouro.idBairro());
+        if (bairro.isEmpty()) {
+            throw new ErroNegocioException("Bairro não encontrado");
         }
-        return null;
+        Logradouro logradouro = new Logradouro(novoLogradouro, bairro.get());
+
+        logradouro = this.logradouroRepository.save(logradouro);
+
+        return new LogradouroResponseDTO(logradouro);
     }
 
-     */
-
-
-    private EmpresaResponseDTO toDTO(Empresa empresa, boolean self) {
+    private LogradouroResponseDTO toDTO(Logradouro logradouro, boolean self) {
         Link link;
         if (self) {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresaPorId(empresa.getId())).withSelfRel();
+            link = linkTo(methodOn(LogradouroController.class).buscarLogradouroPorId(logradouro.getId())).withSelfRel();
         } else {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresas()).withRel("Lista de Empresas");
+            link = linkTo(methodOn(LogradouroController.class).buscarLogradouros()).withRel("Lista de Logradouros");
         }
-        return new EmpresaResponseDTO(
-                empresa.getId(),
-                empresa.getNome(),
-                empresa.getNomeExibicao(),
-                empresa.getEmail(),
-                empresa.getTpEmpresa(),
-                empresa.getTelefone(),
+        return new LogradouroResponseDTO(
+                logradouro.getId(),
+                logradouro.getNome(),
+                logradouro.getCep(),
+                logradouro.getTipo(),
+                logradouro.getBairro().getId(),
                 link
         );
     }

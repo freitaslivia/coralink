@@ -4,6 +4,7 @@ package br.com.coralink.api.service;
 import br.com.coralink.api.controller.EmpresaController;
 import br.com.coralink.api.dto.EmpresaDTO;
 import br.com.coralink.api.dto.EmpresaResponseDTO;
+import br.com.coralink.api.exception.ErroNegocioException;
 import br.com.coralink.api.model.Empresa;
 import br.com.coralink.api.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,19 @@ public class EmpresaService {
     }
 
     public EmpresaResponseDTO salvarEmpresa(EmpresaDTO novaEmpresa){
+
+        boolean existente = this.empresaRepository.existsByCnpj(novaEmpresa.cnpj());
+
+        if (existente){
+            throw new ErroNegocioException("CNPJ já existente");
+        }
+
+        boolean existenteEmail = this.empresaRepository.existsByEmail(novaEmpresa.email());
+
+        if (existenteEmail){
+            throw new ErroNegocioException("Email já existente");
+        }
+
         Empresa empresa = new Empresa(novaEmpresa);
 
         empresa = this.empresaRepository.save(empresa);

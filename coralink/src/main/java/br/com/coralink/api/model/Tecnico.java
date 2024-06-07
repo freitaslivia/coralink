@@ -12,7 +12,9 @@ import java.util.Optional;
 
 @Entity
 
-@Table(name = "CORALINK_TECNICO")
+@Table(name = "CORALINK_TECNICO", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_TELEFONE", columnNames = {"nr_tel_principal"})
+})
 @Getter
 @Setter
 @ToString
@@ -27,7 +29,7 @@ public class Tecnico {
             name = "geradorIds",
             sequenceName = "sq_tb_tecnico",
             allocationSize = 1)
-    @Column(name = "pk_id_tecnico",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_tecnico",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "nm_tecnico", columnDefinition = "VARCHAR(100)", nullable = false)
@@ -44,7 +46,7 @@ public class Tecnico {
     @JsonIgnore
     private Usuario usuario;
 
-    public Tecnico(TecnicoDTO dadosTecnico, Optional<Usuario> usuario) {
+    public Tecnico(TecnicoDTO dadosTecnico, Usuario usuario) {
         this.nome = dadosTecnico.nome();
         this.telefone = dadosTecnico.telefone();
         this.nomeEmpresa = dadosTecnico.nomeEmpresa();

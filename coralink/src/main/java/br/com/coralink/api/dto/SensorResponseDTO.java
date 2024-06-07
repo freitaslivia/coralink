@@ -1,12 +1,7 @@
 package br.com.coralink.api.dto;
 
 import br.com.coralink.api.model.Sensor;
-import io.swagger.v3.oas.annotations.links.Link;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import org.springframework.hateoas.Link;
 
 public record SensorResponseDTO(
         Long id,
@@ -14,8 +9,6 @@ public record SensorResponseDTO(
         String nome,
 
         String numeroSerie,
-
-        int codigoPareamento,
 
         String sensorMain,
 
@@ -30,6 +23,6 @@ public record SensorResponseDTO(
         Link link
 ) {
     public SensorResponseDTO(Sensor sensor) {
-        this(sensor.getId(), sensor.getNome(), sensor.getNumeroSerie(), sensor.getCodigoPareamento(), sensor.getSensorMain(), sensor.getLatitude(), sensor.getLongitude(), sensor.getEmpresa().getId(), sensor.getUsuario().getId(), null);
+        this(sensor.getId(), sensor.getNome(), sensor.getNumeroSerie(), sensor.getSensorMain(), sensor.getLatitude(), sensor.getLongitude(), sensor.getEmpresa().getId(), sensor.getUsuario().getId(), null);
     }
 }

@@ -26,7 +26,7 @@ public class Empresa {
             name = "geradorIds",
             sequenceName = "sq_tb_empresa",
             allocationSize = 1)
-    @Column(name = "pk_id_empresa",  columnDefinition = "NUMERIC(10)")
+    @Column(name = "pk_id_empresa",  columnDefinition = "NUMBER(10)")
     private Long id;
 
     @Column(name = "nm_empresa", columnDefinition = "VARCHAR(100)", nullable = false)
@@ -52,7 +52,7 @@ public class Empresa {
         this.nome = dadosEmpresa.nome();
         this.nomeExibicao = dadosEmpresa.nomeExibicao();
         this.cnpj = dadosEmpresa.cnpj();
-        this.email = dadosEmpresa.email();
+        this.email = dadosEmpresa.email().toLowerCase();
         this.telefone = dadosEmpresa.telefone();
         this.tpEmpresa = dadosEmpresa.tpEmpresa();
     }

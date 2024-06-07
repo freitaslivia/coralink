@@ -17,7 +17,7 @@ public record TecnicoDTO(
 
         @NotBlank(message = "O campo não pode estar vazio")
         @Pattern(regexp = "^[0-9]{13}$", message = "Deve ter somente números e extamente 13 digitos")
-        @Schema(description = "CNPJ da empresa", example = "5511922445667")
+        @Schema(description = "Telefone", example = "5511922445667")
         String telefone,
 
         @NotBlank(message = "O campo não pode estar vazio")
@@ -26,7 +26,6 @@ public record TecnicoDTO(
         String nomeEmpresa,
 
         @NotNull(message = "O campo não pode ser nulo")
-        @Pattern(regexp = "^[0-9]$", message = "Deve ter somente números")
         @Schema(description = "ID usuario", example = "1")
         Long idUsuario
 

@@ -1,11 +1,14 @@
 package br.com.coralink.api.service;
 
 
+import br.com.coralink.api.controller.CidadeController;
 import br.com.coralink.api.controller.EmpresaController;
-import br.com.coralink.api.dto.EmpresaDTO;
-import br.com.coralink.api.dto.EmpresaResponseDTO;
-import br.com.coralink.api.model.Empresa;
+import br.com.coralink.api.dto.*;
+import br.com.coralink.api.exception.ErroNegocioException;
+import br.com.coralink.api.model.*;
+import br.com.coralink.api.repository.CidadeRepository;
 import br.com.coralink.api.repository.EmpresaRepository;
+import br.com.coralink.api.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -22,56 +27,50 @@ public class CidadeService {
     private static final Pageable paginacaoPersonalizada = PageRequest.of(0, 5, Sort.by("nome").ascending());
 
     @Autowired
-    private EmpresaRepository empresaRepository;
+    private CidadeRepository cidadeRepository;
 
-    public Page<EmpresaResponseDTO> buscarEmpresas() {
-        return empresaRepository.findAll(paginacaoPersonalizada).map(empresa -> toDTO(empresa, true));
+    @Autowired
+    private EstadoRepository estadoRepository;
+
+    public Page<CidadeResponseDTO> buscarCidades() {
+        return cidadeRepository.findAll(paginacaoPersonalizada).map(cidade -> toDTO(cidade, true));
     }
 
-    public EmpresaResponseDTO buscarEmpresaPorId(Long id) {
-        return empresaRepository.findById(id).map(empresa -> toDTO(empresa, false)).orElse(null);
+    public CidadeResponseDTO buscarCidadePorId(Long id) {
+        return cidadeRepository.findById(id).map(cidade -> toDTO(cidade, false)).orElse(null);
     }
 
-    public EmpresaResponseDTO salvarEmpresa(EmpresaDTO novaEmpresa){
-        Empresa empresa = new Empresa(novaEmpresa);
+    public CidadeResponseDTO salvarCidade(CidadeDTO novaCidade){
 
-        empresa = this.empresaRepository.save(empresa);
-
-        return new EmpresaResponseDTO(empresa);
-    }
-
-    /*
-    public EmpresaDTO atualizarProduto(Long id, EmpresaDTO empresaDTO){
-        Optional<EmpresaDTO> empresaOptional = produtoRepository.findById(id);
-        if (empresaOptional.isPresent()) {
-
-            Produto produtoAtual = produtoOptional.get();
-            produtoAtual.setNome(produto.getNome());
-            produtoAtual.setDescricao(produto.getDescricao());
-            produtoAtual.setPreco(produto.getPreco());
-            produtoAtual.setDimensoes(produto.getDimensoes());
-            return produtoRepository.save(produtoAtual);
+        Optional<Estado> estado = estadoRepository.findById(novaCidade.idEstado());
+        if (estado.isEmpty()) {
+            throw new ErroNegocioException("Estado não encontrado");
         }
-        return null;
+        Cidade cidadeExistente = this.cidadeRepository.findByNomeAndIdEstado(novaCidade.nome().toLowerCase(), novaCidade.idEstado());
+
+        if(cidadeExistente != null){
+            return new CidadeResponseDTO(cidadeExistente);
+        }
+
+        Cidade cidade = new Cidade(novaCidade, estado.get());
+
+        cidade = this.cidadeRepository.save(cidade);
+
+        return new CidadeResponseDTO(cidade);
     }
 
-     */
-
-
-    private EmpresaResponseDTO toDTO(Empresa empresa, boolean self) {
+    private CidadeResponseDTO toDTO(Cidade cidade, boolean self) {
         Link link;
         if (self) {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresaPorId(empresa.getId())).withSelfRel();
+            link = linkTo(methodOn(CidadeController.class).buscarCidadePorId(cidade.getId())).withSelfRel();
         } else {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresas()).withRel("Lista de Empresas");
+            link = linkTo(methodOn(CidadeController.class).buscarCidades()).withRel("Lista de Cidades");
         }
-        return new EmpresaResponseDTO(
-                empresa.getId(),
-                empresa.getNome(),
-                empresa.getNomeExibicao(),
-                empresa.getEmail(),
-                empresa.getTpEmpresa(),
-                empresa.getTelefone(),
+        return new CidadeResponseDTO(
+                cidade.getId(),
+                cidade.getNome(),
+                cidade.getDdd(),
+                cidade.getEstado().getId(),
                 link
         );
     }

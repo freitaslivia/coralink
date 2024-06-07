@@ -22,7 +22,6 @@ public record LogradouroDTO(
 
 
         @NotBlank(message = "O campo não pode estar vazio")
-        @Pattern(regexp = "^[0-9]{8}$", message = "Deve ter somente números e 8 digitos")
         @Schema(description = "CEP", example = " 04551000")
         String cep,
 
@@ -30,8 +29,6 @@ public record LogradouroDTO(
         @Schema(description = "Tipo de logradouro", example = "Residencial")
         String tipo,
 
-        @NotNull(message = "O campo não pode ser nulo")
-        @Pattern(regexp = "^[0-9]$", message = "Deve ter somente números")
         @Schema(description = "ID do Bairro", example = "1")
         Long idBairro
 

@@ -1,10 +1,13 @@
 package br.com.coralink.api.service;
 
 
+import br.com.coralink.api.controller.BairroController;
 import br.com.coralink.api.controller.EmpresaController;
-import br.com.coralink.api.dto.EmpresaDTO;
-import br.com.coralink.api.dto.EmpresaResponseDTO;
-import br.com.coralink.api.model.Empresa;
+import br.com.coralink.api.dto.*;
+import br.com.coralink.api.exception.ErroNegocioException;
+import br.com.coralink.api.model.*;
+import br.com.coralink.api.repository.BairroRepository;
+import br.com.coralink.api.repository.CidadeRepository;
 import br.com.coralink.api.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -22,56 +27,49 @@ public class BairroService {
     private static final Pageable paginacaoPersonalizada = PageRequest.of(0, 5, Sort.by("nome").ascending());
 
     @Autowired
-    private EmpresaRepository empresaRepository;
+    private BairroRepository bairroRepository;
 
-    public Page<EmpresaResponseDTO> buscarEmpresas() {
-        return empresaRepository.findAll(paginacaoPersonalizada).map(empresa -> toDTO(empresa, true));
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
+    public Page<BairroResponseDTO> buscarBairros() {
+        return bairroRepository.findAll(paginacaoPersonalizada).map(bairro -> toDTO(bairro, true));
     }
 
-    public EmpresaResponseDTO buscarEmpresaPorId(Long id) {
-        return empresaRepository.findById(id).map(empresa -> toDTO(empresa, false)).orElse(null);
+    public BairroResponseDTO buscarBairroPorId(Long id) {
+        return bairroRepository.findById(id).map(bairro -> toDTO(bairro, false)).orElse(null);
     }
 
-    public EmpresaResponseDTO salvarEmpresa(EmpresaDTO novaEmpresa){
-        Empresa empresa = new Empresa(novaEmpresa);
-
-        empresa = this.empresaRepository.save(empresa);
-
-        return new EmpresaResponseDTO(empresa);
-    }
-
-    /*
-    public EmpresaDTO atualizarProduto(Long id, EmpresaDTO empresaDTO){
-        Optional<EmpresaDTO> empresaOptional = produtoRepository.findById(id);
-        if (empresaOptional.isPresent()) {
-
-            Produto produtoAtual = produtoOptional.get();
-            produtoAtual.setNome(produto.getNome());
-            produtoAtual.setDescricao(produto.getDescricao());
-            produtoAtual.setPreco(produto.getPreco());
-            produtoAtual.setDimensoes(produto.getDimensoes());
-            return produtoRepository.save(produtoAtual);
+    public BairroResponseDTO salvarBairro(BairroDTO novoBairro){
+        Optional<Cidade> cidade = cidadeRepository.findById(novoBairro.idCidade());
+        if (cidade.isEmpty()) {
+            throw new ErroNegocioException("Cidade não encontrada");
         }
-        return null;
+
+        Bairro bairroExistente = this.bairroRepository.findByNomeAndIdCidade(novoBairro.nome().toLowerCase(), novoBairro.idCidade());
+
+        if(bairroExistente != null){
+            return new BairroResponseDTO(bairroExistente);
+        }
+        Bairro bairro = new Bairro(novoBairro, cidade.get());
+
+        bairro = this.bairroRepository.save(bairro);
+
+        return new BairroResponseDTO(bairro);
     }
 
-     */
-
-
-    private EmpresaResponseDTO toDTO(Empresa empresa, boolean self) {
+    private BairroResponseDTO toDTO(Bairro bairro, boolean self) {
         Link link;
         if (self) {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresaPorId(empresa.getId())).withSelfRel();
+            link = linkTo(methodOn(BairroController.class).buscarBairroPorId(bairro.getId())).withSelfRel();
         } else {
-            link = linkTo(methodOn(EmpresaController.class).buscarEmpresas()).withRel("Lista de Empresas");
+            link = linkTo(methodOn(BairroController.class).buscarBairros()).withRel("Lista de Bairros");
         }
-        return new EmpresaResponseDTO(
-                empresa.getId(),
-                empresa.getNome(),
-                empresa.getNomeExibicao(),
-                empresa.getEmail(),
-                empresa.getTpEmpresa(),
-                empresa.getTelefone(),
+        return new BairroResponseDTO(
+                bairro.getId(),
+                bairro.getNome(),
+                bairro.getNomeZona(),
+                bairro.getCidade().getId(),
                 link
         );
     }

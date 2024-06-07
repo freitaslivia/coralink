@@ -5,4 +5,6 @@ import br.com.coralink.api.model.Tecnico;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SensorRepository extends JpaRepository<Sensor, Long> {
+
+    boolean existsByNumeroSerie(String s);
 }
