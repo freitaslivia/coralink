@@ -22,7 +22,8 @@ public record LogradouroDTO(
 
 
         @NotBlank(message = "O campo não pode estar vazio")
-        @Schema(description = "CEP", example = " 04551000")
+        @Size(max = 8, min = 8, message = "O campo pode somente 8 caracteres")
+        @Schema(description = "CEP", example = "03309000")
         String cep,
 
         @NotBlank(message = "O campo não pode estar vazio")
